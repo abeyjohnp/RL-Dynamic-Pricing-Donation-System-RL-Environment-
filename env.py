@@ -33,7 +33,6 @@ class SupermarketEnv:
     def _generate_mock_inventory(self) -> List[PerishableItem]:
         """Generates the starting inventory for the Easy/Medium tasks."""
         items = []
-        # Let's generate 10 items (a mix of Milk, Bananas, and Beef)
         for i in range(1, 11):
             if i <= 4:
                 items.append(PerishableItem(item_id=i, name="Milk", days_to_expiration=14, base_price=4.0, status="on_shelf"))
