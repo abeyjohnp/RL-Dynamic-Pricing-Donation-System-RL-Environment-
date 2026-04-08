@@ -1,18 +1,17 @@
-version: "0.2.0"
 name: "supermarket-food-rescue"
-description: "AI-driven Dynamic Pricing and Donation Manager for reducing food waste."
+version: "0.2.0"
 entry_point: "env:SupermarketEnv"
-tags: ["logistics", "sustainability", "resource-management"]
+
 tasks:
   - name: "easy"
-    description: "Low customer volume, predictable expiration dates."
+    description: "Low volume, long expiration dates."
     grader:
       type: "reward"
   - name: "medium"
-    description: "Standard supermarket operations with fluctuating demand."
+    description: "Standard supermarket operations."
     grader:
       type: "reward"
   - name: "hard"
-    description: "Holiday rush with high volume and rapid stock turnover."
+    description: "High volume with holiday closures."
     grader:
       type: "reward"
