@@ -4,14 +4,18 @@ entry_point: "env:SupermarketEnv"
 
 tasks:
   - name: "easy"
-    description: "Low volume, long expiration dates."
+    description: "Low volume — 5 items, agent must minimise waste"
     grader:
       type: "reward"
+      goal: 0.5
   - name: "medium"
-    description: "Standard supermarket operations."
+    description: "Standard operations — 10 items"
     grader:
       type: "reward"
+      goal: 0.7
+    default: true
   - name: "hard"
-    description: "High volume with holiday closures."
+    description: "Holiday rush — 20 items, tighter expiry windows"
     grader:
       type: "reward"
+      goal: 0.9

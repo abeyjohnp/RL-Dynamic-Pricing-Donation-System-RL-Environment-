@@ -18,4 +18,4 @@ dependencies = [
 [tool.setuptools.packages.find]
 where = ["."]
 [project.scripts]
-server = "openenv.core.env_server.http_server:main"
+server = "server.app:main"

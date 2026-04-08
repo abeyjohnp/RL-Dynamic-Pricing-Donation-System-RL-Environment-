@@ -1,8 +1,3 @@
-from openenv.core.env_server import create_web_interface_app
-from env import SupermarketEnv, PricingAction, RetailObservation
-
-# 1. Boot up your game engine
-store_env = SupermarketEnv()
-
-# 2. Wrap it in the official OpenEnv web server
-app = create_web_interface_app(store_env, PricingAction, RetailObservation)
+# Root-level app.py — kept for local dev/debugging only.
+# Docker runs server/app.py via: uvicorn server.app:app
+from server.app import app  # noqa: F401 — re-export for convenience
