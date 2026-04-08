@@ -1,6 +1,5 @@
-version: 1.0
-name: supermarket-food-rescue
-description: >
-  An environment where an AI acts as a Dynamic Pricing & Donation Manager for a supermarket.
-  The agent must balance profit and sustainability by discounting or donating aging perishables before they expire.
+version: "0.2.0"
+name: "supermarket-food-rescue"
+description: "AI-driven Dynamic Pricing and Donation Manager for reducing food waste."
+entry_point: "env:SupermarketEnv"
 tags: ["logistics", "sustainability", "resource-management"]

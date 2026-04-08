@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build-meta"
+
+[project]
+name = "supermarket-food-rescue"
+version = "0.1.0"
+description = "AI-driven Dynamic Pricing and Donation Manager for reducing food waste."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "openenv-core",
+    "pydantic",
+    "fastapi",
+    "uvicorn"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+[project.scripts]
+server = "openenv.core.env_server.http_server:main"
