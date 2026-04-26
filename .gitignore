@@ -1,0 +1,29 @@
+documentations
+supermarket_food_rescue.egg-info
+
+# Project specific exports
+smart_food_rescue_*.csv
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Python cache and distribution
+__pycache__/
+*.pyc
+*.pyo
+dist/
+build/
+
+# Environment variables (API keys, secrets)
+.env
+.env.*
+
+# IDE folders
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+*.log
