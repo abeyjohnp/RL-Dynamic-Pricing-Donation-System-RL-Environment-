@@ -1,0 +1,254 @@
+{% extends "layout.html" %}
+{% block title %}Dashboard — Smart Food Rescue{% endblock %}
+
+{% block content %}
+
+<!-- ═══ EVENT MODE BANNER ════════════════════════════════════════════════════ -->
+<div class="event-banner" id="event-banner" style="display:none">
+  <span class="event-banner-icon" id="event-banner-icon"></span>
+  <span class="event-banner-label" id="event-banner-label"></span>
+  <span class="event-banner-desc"  id="event-banner-desc"></span>
+</div>
+
+<!-- ═══ KPI CARDS ════════════════════════════════════════════════════════════ -->
+<section class="kpi-row" aria-label="Key performance indicators">
+
+  <div class="kpi-card">
+    <div class="kpi-icon-wrap" style="--icon-color:#00e5a0"><span class="kpi-icon">💰</span></div>
+    <div class="kpi-body">
+      <div class="kpi-value" id="kpi-revenue-val">$0.00</div>
+      <div class="kpi-label">Total Revenue</div>
+    </div>
+    <div class="kpi-glow" style="--glow:#00e5a0"></div>
+  </div>
+
+  <div class="kpi-card">
+    <div class="kpi-icon-wrap" style="--icon-color:#74b9ff"><span class="kpi-icon">🌱</span></div>
+    <div class="kpi-body">
+      <div class="kpi-value" id="kpi-rescued-val">0</div>
+      <div class="kpi-label">Food Rescued</div>
+    </div>
+    <div class="kpi-glow" style="--glow:#74b9ff"></div>
+  </div>
+
+  <div class="kpi-card">
+    <div class="kpi-icon-wrap" style="--icon-color:#ffa502"><span class="kpi-icon">⚠️</span></div>
+    <div class="kpi-body">
+      <div class="kpi-value" id="kpi-risk-val">0</div>
+      <div class="kpi-label">Items at Risk</div>
+    </div>
+    <div class="kpi-glow" style="--glow:#ffa502"></div>
+  </div>
+
+  <div class="kpi-card">
+    <div class="kpi-icon-wrap" style="--icon-color:#ff4757"><span class="kpi-icon">🗑️</span></div>
+    <div class="kpi-body">
+      <div class="kpi-value" id="kpi-waste-val">0</div>
+      <div class="kpi-label">Landfill Waste</div>
+    </div>
+    <div class="kpi-glow" style="--glow:#ff4757"></div>
+  </div>
+
+</section>
+
+<!-- ═══ IMPACT STRIP ════════════════════════════════════════════════════════ -->
+<section class="impact-strip" aria-label="Social and environmental impact">
+  <div class="impact-chip">
+    <span class="impact-chip-icon">🍽️</span>
+    <span class="impact-chip-val" id="imp-meals">0</span>
+    <span class="impact-chip-label">Meals Donated</span>
+  </div>
+  <div class="impact-divider"></div>
+  <div class="impact-chip">
+    <span class="impact-chip-icon">🌍</span>
+    <span class="impact-chip-val" id="imp-co2">0 kg</span>
+    <span class="impact-chip-label">CO₂ Saved</span>
+  </div>
+  <div class="impact-divider"></div>
+  <div class="impact-chip">
+    <span class="impact-chip-icon">💵</span>
+    <span class="impact-chip-val" id="imp-value">$0</span>
+    <span class="impact-chip-label">Value Rescued</span>
+  </div>
+  <div class="impact-divider"></div>
+  <div class="impact-chip">
+    <span class="impact-chip-icon">📊</span>
+    <span class="impact-chip-val" id="imp-risk">0%</span>
+    <span class="impact-chip-label">Avg Risk Score</span>
+  </div>
+</section>
+
+<!-- ═══ MAIN SPLIT ══════════════════════════════════════════════════════════ -->
+<section class="split-grid">
+
+  <!-- LEFT: Inventory Table -->
+  <div class="panel" id="panel-inventory">
+    <div class="panel-header">
+      <h2 class="panel-title">📦 Inventory <span style="font-size:11px;color:var(--text-muted);font-weight:400">(sorted by risk)</span></h2>
+      <span class="panel-meta" id="inv-count">— items</span>
+    </div>
+    <div class="table-wrap">
+      <table class="inv-table" id="inv-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Item</th>
+            <th>Risk</th>
+            <th>Days Left</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="inv-tbody">
+          <tr class="empty-row">
+            <td colspan="7">Press <strong>Reset</strong> to start the simulation</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- RIGHT: Recommendation Panel -->
+  <div class="panel" id="panel-rec">
+    <div class="panel-header">
+      <h2 class="panel-title">🤖 AI Recommendation</h2>
+      <span class="panel-meta">Rule-Based RL</span>
+    </div>
+    <div class="rec-body">
+      <div class="rec-placeholder" id="rec-placeholder">
+        <div class="rec-placeholder-icon">🧠</div>
+        <p>Select an item from the table<br>or press <strong>Next Day</strong> to let the RL agent decide.</p>
+      </div>
+      <div class="rec-content hidden" id="rec-content">
+
+        <div class="rec-item-info">
+          <div class="rec-item-row"><span class="rec-item-label">Item</span>      <span class="rec-item-name"   id="rec-item-name">—</span></div>
+          <div class="rec-item-row"><span class="rec-item-label">Days Left</span> <span class="rec-item-expiry" id="rec-item-expiry">—</span></div>
+          <div class="rec-item-row"><span class="rec-item-label">Base Price</span><span class="rec-item-price"  id="rec-item-price">—</span></div>
+          <div class="rec-item-row"><span class="rec-item-label">Risk Score</span>
+            <div class="rec-risk-bar-wrap">
+              <div class="rec-risk-bar" id="rec-risk-bar"></div>
+              <span class="rec-risk-pct" id="rec-risk-pct">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rec-action-block">
+          <span class="rec-section-label">RL Suggestion</span>
+          <span class="action-badge" id="rec-badge">—</span>
+        </div>
+
+        <div class="rec-detail-block">
+          <span class="rec-section-label">Why this action</span>
+          <p class="rec-reason" id="rec-reason">—</p>
+        </div>
+
+        <div class="rec-detail-block">
+          <span class="rec-section-label">Financial Impact</span>
+          <p class="rec-financial" id="rec-financial">—</p>
+        </div>
+
+        <div class="rec-detail-block">
+          <span class="rec-section-label">Expected Result</span>
+          <p class="rec-result" id="rec-result">—</p>
+        </div>
+
+        <!-- Donation partner block (shown only when action=donate) -->
+        <div class="partner-block hidden" id="partner-block">
+          <span class="rec-section-label">📍 Nearest Donation Partner</span>
+          <div class="partner-card" id="partner-card"></div>
+        </div>
+
+        <button class="btn btn-apply" id="btn-apply" onclick="applyRecommendation()">
+          ✓ Apply Suggestion
+        </button>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══ WHAT-IF SIMULATOR ════════════════════════════════════════════════════ -->
+<section class="panel whatif-panel" id="whatif-section">
+  <div class="panel-header" style="cursor:pointer" onclick="toggleWhatIf()">
+    <h2 class="panel-title">🔬 What-If Simulator</h2>
+    <span class="panel-meta" id="whatif-toggle-label">▼ Expand</span>
+  </div>
+  <div class="whatif-body hidden" id="whatif-body">
+    <div class="whatif-controls">
+      <div class="whatif-input-group">
+        <label class="whatif-label" for="wi-demand">Demand Drop (%)</label>
+        <input class="whatif-input" id="wi-demand" type="range" min="0" max="80" value="30" oninput="document.getElementById('wi-demand-val').textContent=this.value+'%'">
+        <span class="whatif-val" id="wi-demand-val">30%</span>
+      </div>
+      <div class="whatif-input-group">
+        <label class="whatif-label" for="wi-price">Price Sensitivity</label>
+        <input class="whatif-input" id="wi-price" type="range" min="1" max="20" value="10" oninput="document.getElementById('wi-price-val').textContent=(this.value/10).toFixed(1)+'×'">
+        <span class="whatif-val" id="wi-price-val">1.0×</span>
+      </div>
+      <button class="btn btn-primary" onclick="runWhatIf()" id="btn-whatif">Run Simulation</button>
+    </div>
+
+    <div class="whatif-results hidden" id="whatif-results">
+      <div class="whatif-col">
+        <div class="whatif-col-header whatif-col-bad">Without RL</div>
+        <div class="whatif-metric"><span>Projected Waste</span>    <strong id="wi-no-waste">—</strong></div>
+        <div class="whatif-metric"><span>Projected Revenue</span>  <strong id="wi-no-rev">—</strong></div>
+        <div class="whatif-metric"><span>Donations</span>          <strong id="wi-no-donate">—</strong></div>
+      </div>
+      <div class="whatif-vs">VS</div>
+      <div class="whatif-col">
+        <div class="whatif-col-header whatif-col-good">With RL Agent</div>
+        <div class="whatif-metric"><span>Projected Waste</span>    <strong id="wi-rl-waste">—</strong></div>
+        <div class="whatif-metric"><span>Projected Revenue</span>  <strong id="wi-rl-rev">—</strong></div>
+        <div class="whatif-metric"><span>Donations</span>          <strong id="wi-rl-donate">—</strong></div>
+        <div class="whatif-metric whatif-bonus"><span>🍽️ Meals Saved</span><strong id="wi-meals">—</strong></div>
+        <div class="whatif-metric whatif-bonus"><span>🌍 CO₂ Saved</span>  <strong id="wi-co2">—</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ANALYTICS CHARTS ═════════════════════════════════════════════════════ -->
+<section class="charts-row">
+  <div class="chart-card">
+    <div class="chart-header"><span class="chart-title">🗑️ Waste Over Time</span></div>
+    <canvas id="chart-waste"></canvas>
+  </div>
+  <div class="chart-card">
+    <div class="chart-header"><span class="chart-title">💰 Revenue Over Time</span></div>
+    <canvas id="chart-revenue"></canvas>
+  </div>
+  <div class="chart-card">
+    <div class="chart-header"><span class="chart-title">🌱 Donations Over Time</span></div>
+    <canvas id="chart-donations"></canvas>
+  </div>
+</section>
+
+<!-- ═══ ACTION LOG ═══════════════════════════════════════════════════════════ -->
+<section class="panel" id="panel-log">
+  <div class="panel-header">
+    <h2 class="panel-title">📋 Action Log</h2>
+    <span class="panel-meta" id="log-count">0 actions</span>
+  </div>
+  <div class="table-wrap">
+    <table class="inv-table" id="log-table">
+      <thead>
+        <tr><th>Day</th><th>Item</th><th>Action</th><th>Reward</th><th>Cumulative Revenue</th></tr>
+      </thead>
+      <tbody id="log-tbody">
+        <tr class="empty-row"><td colspan="5">No actions yet — start the simulation</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Toast -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
