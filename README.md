@@ -42,16 +42,93 @@ The reward function is dense and provides partial feedback to guide the agent:
 - **-2.0**: Massive penalty if an item expires and goes to the `landfill`!
 
 ##  How to Run
-You can connect to this environment using the standard OpenEnv client:
-```python
-from openenv.client import RemoteEnvironment
-import asyncio
 
-async def main():
-    env = RemoteEnvironment("http://127.0.0.1:8000")
-    obs = await env.reset()
-    print(obs)
+### Prerequisites
 
-if __name__ == "__main__":
-    asyncio.run(main())
+Install the required dependencies using `pip`:
+```bash
+pip install pydantic openenv-core fastapi uvicorn openai requests
 ```
+
+Or use `uv` (recommended — uses the lockfile for reproducible installs):
+```bash
+pip install uv
+uv sync
+```
+
+---
+
+### How to run the whole project manually
+To run the full suite of tools in this project, follow these steps in separate terminal windows:
+
+#### 1. Start the Environment API (Backend)
+This starts the "official" OpenEnv API server which would be used for formal evaluation.
+```powershell
+uvicorn server.app:app --host 127.0.0.1 --port 8000
+```
+
+#### 2. Start the Interactive Dashboard (Frontend)
+This provides the visual UI for the project.
+```powershell
+python app.py
+```
+Open [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser.
+
+#### 3. Run the LLM Inference Agent (The "AI")
+If you want to see the AI (LLM) actually making decisions for the supermarket:
+```powershell
+# Note: Requires an HF_TOKEN set in your environment variables
+python inference.py
+```
+
+#### 4. Run a Quick Smoke Test
+To verify the core environment logic is working correctly without any servers:
+```powershell
+python test_env.py
+```
+
+**Summary of Ports:**
+*   **Port 5000:** The Dashboard (User Interface).
+*   **Port 8000:** The Environment API (The "Brain" for EVAL).
+
+---
+
+### How to run using Docker
+
+Running with Docker ensures a consistent environment and is how the project is validated for the Google Solution Challenge.
+
+#### 1. Build the Docker Image
+Navigate to the root directory and run:
+```bash
+docker build -t supermarket-food-rescue .
+```
+
+#### 2. Run the Container
+Start the container and map the internal port 8000 to your local machine:
+```bash
+docker run -p 8000:8000 supermarket-food-rescue
+```
+
+#### 3. What happens in Docker?
+The Docker container is specifically configured to run the **Environment API** (`server/app.py`). 
+*   It exposes **Port 8000**.
+*   It serves the `/tasks` and `/metadata` endpoints required by the OpenEnv validator.
+*   The interactive dashboard is typically run locally (outside Docker) during development, but the backend API is what counts for the submission.
+
+---
+
+### Full Submission Validation (Docker required)
+
+Run the complete end-to-end submission validator:
+```bash
+# Make executable (first time only)
+chmod +x validate-submission.sh
+
+# Run against your HF Space URL
+./validate-submission.sh https://your-space.hf.space
+```
+
+This performs 3 steps:
+1. Pings your HF Space `/reset` endpoint (must return HTTP 200)
+2. Runs `docker build` locally (with 600s timeout)
+3. Runs `python -m openenv.cli validate` in the repo directory

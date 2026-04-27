@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Smart Food Rescue — AI-driven dynamic pricing and donation manager that reduces supermarket food waste using reinforcement learning." />
+  <title>{% block title %}Smart Food Rescue{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- ═══════════════ NAVBAR ════════════════ -->
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="navbar-brand">
+      <span class="navbar-icon">🌿</span>
+      <span class="navbar-title">Smart Food Rescue</span>
+      <span class="navbar-subtitle">RL Decision Engine</span>
+    </div>
+
+    <div class="navbar-center">
+      <span class="scenario-label">Scenario</span>
+      <div class="scenario-pills" role="group" aria-label="Scenario selector">
+        <button class="pill active" id="pill-easy"   onclick="setScenario('easy')">Easy</button>
+        <button class="pill"        id="pill-medium" onclick="setScenario('medium')">Medium</button>
+        <button class="pill"        id="pill-hard"   onclick="setScenario('hard')">Hard</button>
+      </div>
+      <span class="scenario-label" style="margin-left:12px">Event</span>
+      <select class="event-select" id="event-select" onchange="setEvent(this.value)" aria-label="Event mode">
+        <option value="normal">🟢 Normal</option>
+        <option value="holiday">🎄 Holiday Rush</option>
+        <option value="low_demand">📉 Low Demand</option>
+        <option value="transport_delay">🚛 Transport Delay</option>
+        <option value="heatwave">🌡️ Heatwave</option>
+      </select>
+    </div>
+
+    <div class="navbar-actions">
+      <span class="day-badge" id="day-badge">Day —</span>
+      <button class="btn btn-ghost"    id="btn-reset"  onclick="resetSimulation()" title="Reset Simulation">
+        <span class="btn-icon">↺</span> Reset
+      </button>
+      <button class="btn btn-primary"  id="btn-next"   onclick="runNextDay()"     title="Run Next Day">
+        <span class="btn-icon">▶</span> Next Day
+      </button>
+      <button class="btn btn-whatif"   id="btn-wi"     onclick="scrollToWhatIf()" title="What-If Simulator">
+        🔬 What-If
+      </button>
+      <button class="btn btn-outline"  id="btn-export" onclick="exportReport()"   title="Export Report">
+        <span class="btn-icon">↓</span> Export
+      </button>
+    </div>
+  </nav>
+
+  <!-- ═══════════════ PAGE CONTENT ════════════════ -->
+  <main class="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,3 +1,9 @@
 pydantic>=2.0.0
 openenv-core
 openai
+flask>=3.0.0
+flask-cors>=4.0.0
+uv
+fastapi 
+uvicorn 
+requests
